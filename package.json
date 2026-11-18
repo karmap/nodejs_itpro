@@ -1,0 +1,14 @@
+{
+  "name": "node-itpro",
+  "version": "1.0.0",
+  "description": "Curso introductorio de Node.js para quienes completaron el curso de Python aplicado",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "zod": "4.6.7"
+  }
+}
