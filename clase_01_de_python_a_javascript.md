@@ -1,40 +1,38 @@
-# Clase 01: De Python a JavaScript con Node.js
+# Clase 01: Node.js en tu computadora y de Python a JavaScript
 
-**Duración:** 1 a 2 horas
+**Duración:** 2 horas
 
 > Los bloques de desarrollo se leen en orden dentro de cada ejemplo. Las plantillas con `...` se completan en las actividades; las cheat sheets reúnen operaciones independientes. Los programas completos incluyen sus imports.
 
+La clase tiene dos partes. La **parte 1** (unos 50 minutos) deja lista tu computadora: Node.js instalado con un gestor de versiones, editor, terminal y la carpeta del curso. Nadie debería pasar a la parte 2 sin completar la Actividad 1. La **parte 2** traduce a JavaScript la sintaxis básica de Python. Si el tiempo no alcanza, el ejercicio final se puede dejar como tarea.
+
 ### Objetivos
 
-- Entender qué es JavaScript y qué papel cumple Node.js.
-- Instalar Node.js y ejecutar programas desde la terminal.
+- Instalar Node.js con un gestor de versiones y elegir la versión correcta.
+- Preparar un ambiente local: terminal, editor, carpeta del curso y versión fijada con `.nvmrc`.
+- Ejecutar programas desde la terminal, reiniciarlos al guardar con `--watch` y depurarlos con VS Code.
+- Resolver los problemas de instalación más frecuentes.
 - Traducir a JavaScript lo que ya sabes de Python: variables, tipos, operadores, condiciones y ciclos.
 - Reconocer las diferencias que más errores causan al venir de Python: `===`, `null` y `undefined`, conversiones que no lanzan errores y valores *truthy*.
 - Construir un simulador de ahorro mes a mes.
 
 ---
 
+# Parte 1: Node.js en tu computadora
+
 ## 1. JavaScript y Node.js
 
-En el curso de Python escribíamos un archivo `.py` y lo ejecutaba el intérprete de Python:
+En el curso de Python escribíamos un archivo `.py` y lo ejecutaba el intérprete de Python. Con Node.js el flujo es el mismo:
 
 ```text
-programa.py
-     ↓
-python (intérprete)
-     ↓
-resultado en la terminal
+programa.py                         programa.js
+     ↓                                   ↓
+python (intérprete)                 node (V8 + biblioteca de Node.js)
+     ↓                                   ↓
+resultado en la terminal            resultado en la terminal
 ```
 
-JavaScript nació para ejecutarse dentro del navegador. **Node.js** toma el motor de JavaScript de Chrome, llamado **V8**, y lo ejecuta fuera del navegador, con acceso a archivos, red y terminal:
-
-```text
-programa.js
-     ↓
-node (V8 + biblioteca de Node.js)
-     ↓
-resultado en la terminal
-```
+Como vimos en la clase 00, **Node.js** toma **V8**, el motor de JavaScript de Chrome, y lo ejecuta fuera del navegador, con acceso a archivos, red y terminal. Un **runtime** es ese entorno que ejecuta el código y le da acceso al sistema.
 
 | Concepto | En Python | En JavaScript |
 |---|---|---|
@@ -45,18 +43,137 @@ resultado en la terminal
 | Consola interactiva | `python` | `node` |
 | Instalar paquetes | `pip` | `npm` (clase 06) |
 
-Un **runtime** es el entorno que ejecuta el código y le da acceso al sistema. En este curso no usaremos el navegador: todo se ejecuta con Node.js en la terminal, como hacíamos con Python.
+En este curso no usaremos el navegador: todo se ejecuta con Node.js en la terminal, como hacíamos con Python.
 
 ---
 
-## 2. Instalar Node.js
+## 2. Qué versión instalar
 
-Descarga la versión **LTS** (soporte a largo plazo) desde [nodejs.org](https://nodejs.org). Este curso se comprobó con Node.js 24. Si prefieres administrar varias versiones, puedes usar `nvm` (macOS/Linux) o `fnm` (macOS, Linux y Windows).
+Node.js publica versiones numeradas (22, 24, 26...). Lo que importa es si la versión es **LTS**:
 
-Comprueba la instalación:
+| Tipo | Significado | ¿Para el curso? |
+|---|---|---|
+| **LTS** (*Long Term Support*) | Versión estable con correcciones durante unos 30 meses. | Sí |
+| **Current** | La más nueva, para probar novedades. Su soporte es corto. | No |
+
+Este curso se comprobó con **Node.js 24 LTS** (24.15.0, con npm 11.12.1). Usaremos esa versión para que todo lo que veas en clase coincida con tu computadora. Puedes consultar qué versiones tienen soporte en el [calendario de versiones de Node.js](https://nodejs.org/en/about/previous-releases).
+
+### ¿Por qué un gestor de versiones?
+
+En Python, si un proyecto necesitaba Python 3.11 y otro 3.13, se podía usar `pyenv` para tener ambas. Node.js tiene herramientas equivalentes, y en JavaScript se usan todavía más porque cada proyecto suele fijar su versión de Node.js.
+
+Un **gestor de versiones** instala Node.js dentro de tu carpeta de usuario y te permite:
+
+- Tener varias versiones instaladas y cambiar entre ellas con un comando.
+- Cambiar de versión automáticamente al entrar a la carpeta de un proyecto.
+- Instalar paquetes globales sin `sudo` ni permisos de administrador.
+
+Usaremos **fnm** (*Fast Node Manager*) porque funciona igual en macOS, Windows y Linux. Si ya usas **nvm**, también sirve: los comandos equivalentes aparecen en la sección 3.
+
+---
+
+## 3. Instalar Node.js
+
+Antes de empezar, comprueba si ya tienes Node.js:
 
 ```bash
 node --version
+```
+
+Si muestra `v24.x.x` o superior y no quieres usar un gestor de versiones, puedes saltar a la sección 4. Si muestra una versión anterior, o si no sabes cómo se instaló, sigue con el gestor de versiones: convivirá con la instalación anterior y tendrá prioridad.
+
+### macOS
+
+Con [Homebrew](https://brew.sh):
+
+```bash
+brew install fnm
+```
+
+Agrega esta línea al final de `~/.zshrc` para que la terminal cargue fnm al abrirse. La opción `--use-on-cd` cambia de versión automáticamente al entrar a una carpeta con un archivo `.nvmrc`:
+
+```bash
+eval "$(fnm env --use-on-cd --shell zsh)"
+```
+
+Puedes abrir el archivo con `open -e ~/.zshrc`. Guarda, **cierra la terminal y abre una nueva**.
+
+### Windows
+
+En PowerShell:
+
+```powershell
+winget install Schniz.fnm
+```
+
+Abre tu perfil de PowerShell (si no existe, se crea):
+
+```powershell
+if (-not (Test-Path $PROFILE)) { New-Item $PROFILE -Force }
+notepad $PROFILE
+```
+
+Agrega esta línea, guarda, **cierra PowerShell y abre una ventana nueva**:
+
+```powershell
+fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression
+```
+
+Si al abrir PowerShell aparece un error sobre la ejecución de scripts deshabilitada, revisa la sección 8.
+
+### Linux (y WSL en Windows)
+
+```bash
+curl -fsSL https://fnm.vercel.app/install | bash
+```
+
+El instalador agrega la configuración a `~/.bashrc` o `~/.zshrc`. Cierra la terminal y abre una nueva. Si quieres el cambio automático de versión, verifica que la línea agregada incluya `--use-on-cd`, como en la de macOS.
+
+### Instalar Node.js 24
+
+Con fnm ya configurado, el procedimiento es igual en los tres sistemas:
+
+```bash
+fnm --version
+```
+
+```bash
+fnm install 24
+```
+
+```bash
+fnm default 24
+```
+
+`fnm install 24` descarga la versión 24 más reciente; `fnm default 24` la deja como la versión que se usa al abrir una terminal. Otros comandos útiles:
+
+| Tarea | fnm | nvm (si ya lo usas) |
+|---|---|---|
+| Instalar una versión | `fnm install 24` | `nvm install 24` |
+| Usarla en esta terminal | `fnm use 24` | `nvm use 24` |
+| Versión por defecto | `fnm default 24` | `nvm alias default 24` |
+| Ver versiones instaladas | `fnm list` | `nvm ls` |
+| Ver la versión activa | `fnm current` | `nvm current` |
+| Instalar la versión de `.nvmrc` | `fnm install` | `nvm install` |
+| Usar la versión de `.nvmrc` | `fnm use` | `nvm use` |
+
+### Alternativa: instalador oficial
+
+Si el gestor de versiones te da problemas y necesitas avanzar, descarga el instalador **LTS** desde [nodejs.org](https://nodejs.org/es/download) y sigue el asistente. Funciona bien para el curso; la desventaja es que solo tendrás una versión y para actualizarla tendrás que repetir la instalación.
+
+No mezcles métodos sin saber cuál tiene prioridad: tener Node.js de Homebrew, del instalador y de fnm a la vez es la causa más común de "instalé la 24 pero me sale la 18". La sección 8 explica cómo detectarlo.
+
+---
+
+## 4. Comprobar la instalación
+
+En una terminal **nueva**:
+
+```bash
+node --version
+```
+
+```bash
 npm --version
 ```
 
@@ -67,11 +184,115 @@ v24.15.0
 11.12.1
 ```
 
-`npm` se instala junto con Node.js. Lo usaremos a partir de la clase 06.
+`npm` se instala junto con Node.js; lo usaremos a partir de la clase 06.
+
+Comprueba también **qué** `node` se está ejecutando. En macOS y Linux:
+
+```bash
+which node
+```
+
+En PowerShell:
+
+```powershell
+Get-Command node
+```
+
+Si usas fnm, la ruta debe contener `fnm`. Si aparece otra ruta, por ejemplo `/opt/homebrew/bin/node` o `C:\Program Files\nodejs\node.exe`, tienes una instalación anterior con prioridad: revisa la sección 8.
 
 ---
 
-## 3. Consola interactiva y primer programa
+## 5. Ambiente local
+
+Un ambiente local es todo lo que necesitas en tu computadora para escribir, ejecutar y depurar programas sin depender de nada externo. Para este curso son cuatro piezas: Node.js, una terminal, un editor y la carpeta del curso.
+
+### Comparación con Python
+
+Muchas piezas tienen un equivalente directo en lo que ya usabas:
+
+| Necesidad | En Python | En Node.js |
+|---|---|---|
+| Administrar versiones del lenguaje | `pyenv` | `fnm` o `nvm` |
+| Fijar la versión de un proyecto | `.python-version` | `.nvmrc` |
+| Aislar las dependencias de un proyecto | `venv` (hay que activarlo) | Carpeta `node_modules` (automática, sin activar) |
+| Instalar paquetes | `pip install` | `npm install` |
+| Lista de dependencias | `requirements.txt` | `package.json` |
+| Paquetes del sistema | `pip install` fuera de un venv | `npm install -g` |
+
+La diferencia más importante: **en Node.js no hay que activar nada**. Cada proyecto guarda sus paquetes en su propia carpeta `node_modules`, y Node.js los busca ahí automáticamente. Lo veremos en la clase 06.
+
+### Terminal
+
+Usa la terminal que ya usabas en el curso de Python:
+
+| Sistema | Terminal recomendada |
+|---|---|
+| macOS | Terminal o iTerm2 (shell `zsh`) |
+| Windows | Windows Terminal con PowerShell |
+| Linux | La terminal de tu distribución (shell `bash` o `zsh`) |
+
+Los comandos de Node.js son los mismos en todos los sistemas. Los de la terminal varían un poco:
+
+| Tarea | macOS / Linux | PowerShell |
+|---|---|---|
+| Carpeta actual | `pwd` | `pwd` |
+| Listar archivos | `ls` | `ls` o `dir` |
+| Entrar a una carpeta | `cd practicas` | `cd practicas` |
+| Subir un nivel | `cd ..` | `cd ..` |
+| Crear una carpeta | `mkdir practicas` | `mkdir practicas` |
+| Limpiar la pantalla | `clear` | `cls` o `clear` |
+
+### Editor
+
+Recomendamos **Visual Studio Code**. Trae soporte para JavaScript y un depurador para Node.js sin instalar extensiones. Dos ajustes útiles:
+
+- **Abrir la carpeta, no el archivo:** usa *Archivo → Abrir carpeta* y elige la carpeta del curso. Así el editor reconoce el `package.json` y la terminal integrada (`` Ctrl + ` ``) se abre en el lugar correcto.
+- **Comando `code` en la terminal:** en macOS, abre la paleta de comandos (`Cmd + Shift + P`) y ejecuta *Shell Command: Install 'code' command in PATH*. En Windows y Linux el instalador lo agrega. Después, `code .` abre la carpeta actual en VS Code.
+
+La extensión **Prettier** es opcional: formatea el código al guardar. No necesitas más extensiones para el curso.
+
+### Carpeta del curso
+
+Descarga o clona la carpeta del curso y trabaja siempre dentro de ella. Crea una subcarpeta `practicas/` para tus archivos:
+
+```text
+node_itpro/
+├── .nvmrc            ← versión de Node.js del curso
+├── package.json      ← configuración de Node.js y dependencias
+├── README.md
+├── clase_00_historia_de_javascript.md
+├── clase_01_de_python_a_javascript.md
+├── ...
+└── practicas/        ← tus archivos
+    └── clase01/
+        ├── hola.js
+        └── ambiente.js
+```
+
+Dos archivos de la raíz preparan el ambiente:
+
+- **`.nvmrc`** contiene solo `24`. Con fnm configurado con `--use-on-cd`, al entrar a la carpeta la terminal cambia a Node.js 24 automáticamente. Si no, ejecuta `fnm use` (o `nvm use`) dentro de la carpeta.
+- **`package.json`** contiene `"type": "module"`, que hace que Node.js trate cada `.js` como un módulo ES, la forma moderna de JavaScript. Lo explicaremos en la clase 06; por ahora basta con trabajar dentro de la carpeta.
+
+Entra a la carpeta del curso y prepara la tuya:
+
+```bash
+cd node_itpro
+```
+
+```bash
+fnm use
+```
+
+```bash
+mkdir -p practicas/clase01
+```
+
+En PowerShell, `mkdir practicas/clase01` crea ambas carpetas sin la opción `-p`.
+
+---
+
+## 6. Consola interactiva y primer programa
 
 Así como `python` abría una consola interactiva, `node` abre el **REPL** (*Read-Eval-Print Loop*):
 
@@ -84,12 +305,14 @@ node
 5
 > "hola".toUpperCase()
 'HOLA'
+> typeof document
+'undefined'
 > .exit
 ```
 
-Para salir escribe `.exit` o presiona `Ctrl + C` dos veces. El REPL sirve para probar expresiones pequeñas; los programas se escriben en archivos.
+Para salir escribe `.exit` o presiona `Ctrl + C` dos veces. `typeof document` responde la pregunta de la clase 00: `document` pertenece al navegador y no existe en Node.js. El REPL sirve para probar expresiones pequeñas; los programas se escriben en archivos.
 
-Trabaja dentro de la carpeta del curso, por ejemplo en `practicas/`: el `package.json` de la raíz configura Node.js como espera el curso (lo explicaremos en la clase 06). Crea `hola.js`:
+Crea `practicas/clase01/hola.js`:
 
 ```javascript
 console.log("Hola desde Node.js");
@@ -97,6 +320,10 @@ console.log("Total:", 10 + 5);
 ```
 
 Ejecútalo desde la carpeta donde está el archivo:
+
+```bash
+cd practicas/clase01
+```
 
 ```bash
 node hola.js
@@ -109,9 +336,93 @@ Total: 15
 
 `console.log()` equivale a `print()`: muestra sus argumentos separados por un espacio y termina con un salto de línea. `console.log` es la función `log` del objeto `console`; el punto accede a ella, como `texto.upper()` en Python.
 
+### Reiniciar al guardar con `--watch`
+
+Mientras practicas, es cómodo que el programa se vuelva a ejecutar cada vez que guardas:
+
+```bash
+node --watch hola.js
+```
+
+Cambia el texto de `hola.js`, guarda y observa la terminal. Para detenerlo presiona `Ctrl + C`. Es útil con programas cortos como los de esta clase y, más adelante, con servidores.
+
 ---
 
-## 4. Sintaxis básica: llaves, punto y coma y comentarios
+## 7. Depurar con VS Code
+
+En el curso de Python, cuando un programa no hacía lo esperado, agregábamos `print()` o usábamos el depurador. En Node.js `console.log()` cumple el papel de `print()`, y VS Code incluye un depurador:
+
+1. Abre la paleta de comandos (`Cmd + Shift + P` o `Ctrl + Shift + P`) y ejecuta **JavaScript Debug Terminal**. Se abre una terminal especial.
+2. En `hola.js`, haz clic a la izquierda del número de la línea 2. Aparece un punto rojo: un **breakpoint**.
+3. En la terminal de depuración ejecuta `node hola.js`.
+4. El programa se detiene en la línea 2. Desde el panel lateral puedes ver las variables y avanzar línea por línea con `F10`, o continuar con `F5`.
+
+Cualquier programa que ejecutes con `node` en esa terminal se conecta al depurador automáticamente; no hay que configurar nada.
+
+---
+
+## Actividad 1: Verifica tu ambiente
+
+Crea `practicas/clase01/ambiente.js` y copia el siguiente programa. Usa sintaxis que veremos en la parte 2; al final de la clase podrás explicar cada línea.
+
+```javascript
+console.log("Node.js:", process.version);
+console.log("Ejecutable:", process.execPath);
+console.log("Motor V8:", process.versions.v8);
+console.log("Sistema:", process.platform, process.arch);
+console.log("Carpeta actual:", process.cwd());
+
+const versionMayor = Number(process.versions.node.split(".")[0]);
+
+if (versionMayor >= 24) {
+  console.log("Listo: tu versión de Node.js sirve para el curso.");
+} else {
+  console.log("Atención: instala Node.js 24 o superior.");
+}
+```
+
+`process` es un objeto propio de Node.js con información del programa en ejecución, como `sys` y `os` en Python. Así como `document` solo existe en el navegador, `process` solo existe en Node.js.
+
+Resultado aproximado en macOS (las rutas cambian en cada computadora):
+
+```text
+Node.js: v24.15.0
+Ejecutable: /Users/ana/…/fnm_multishells/…/bin/node
+Motor V8: 13.6.233.17-node.48
+Sistema: darwin arm64
+Carpeta actual: /Users/ana/node_itpro/practicas/clase01
+Listo: tu versión de Node.js sirve para el curso.
+```
+
+Completa esta lista antes de continuar:
+
+- [ ] `node --version` muestra `v24` o superior en una terminal nueva.
+- [ ] `which node` o `Get-Command node` apunta a la instalación que esperas.
+- [ ] La carpeta del curso está abierta en tu editor y la terminal integrada está dentro de ella.
+- [ ] `node --watch ambiente.js` vuelve a ejecutar el programa al guardar.
+- [ ] El depurador se detiene en un breakpoint de `ambiente.js`.
+
+---
+
+## 8. Problemas frecuentes de instalación
+
+| Síntoma | Causa probable | Solución |
+|---|---|---|
+| `command not found: node` o `node no se reconoce como un comando` | La terminal se abrió antes de instalar, o falta la línea de fnm en `~/.zshrc` / `$PROFILE`. | Cierra **todas** las terminales y abre una nueva. Si persiste, revisa que la línea de configuración esté guardada. |
+| `command not found: fnm` | fnm no se instaló o la terminal no se reinició. | Repite la instalación de tu sistema y abre una terminal nueva. |
+| `node --version` muestra una versión vieja | Hay otra instalación con prioridad. | Revisa `which node` / `Get-Command node`. Desinstala la otra (`brew uninstall node` o desde *Agregar o quitar programas* en Windows) o ejecuta `fnm default 24`. |
+| PowerShell: *la ejecución de scripts está deshabilitada en este sistema* | La política de ejecución de Windows bloquea el perfil. | Ejecuta `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` y abre PowerShell de nuevo. Afecta solo a tu usuario. |
+| `fnm use` responde que la versión no está instalada | La carpeta tiene un `.nvmrc` con una versión que no tienes. | Ejecuta `fnm install` en esa carpeta. |
+| `EACCES: permission denied` al usar `npm install -g` | Node.js se instaló en una carpeta del sistema. | No uses `sudo`. Instala Node.js con fnm: los paquetes globales quedan en tu carpeta de usuario. |
+| VS Code muestra otra versión en su terminal integrada | VS Code se abrió antes de configurar fnm. | Cierra VS Code por completo (no solo la ventana) y ábrelo de nuevo. |
+
+Si nada de esto resuelve el problema, comparte con el instructor la salida de `node --version`, `which node` (o `Get-Command node`) y el mensaje de error completo.
+
+---
+
+# Parte 2: De Python a JavaScript
+
+## 9. Sintaxis básica: llaves, punto y coma y comentarios
 
 En Python la indentación define los bloques. En JavaScript los bloques se delimitan con **llaves** `{ }`; la indentación solo facilita la lectura:
 
@@ -150,7 +461,7 @@ Comentarios:
 
 ---
 
-## 5. Variables: `const` y `let`
+## 10. Variables: `const` y `let`
 
 En Python bastaba con asignar: `precio = 450`. En JavaScript declaramos la variable la primera vez:
 
@@ -197,7 +508,7 @@ Mantendremos los nombres en español, como en el curso de Python: `productos`, `
 
 ---
 
-## 6. Números
+## 11. Números
 
 Python tiene `int` y `float`. JavaScript tiene un único tipo para ambos casos: `number`.
 
@@ -238,7 +549,7 @@ console.log(promedio.toFixed(2)); // "22.86"
 
 ---
 
-## 7. Texto y template literals
+## 12. Texto y template literals
 
 Las cadenas se escriben con comillas dobles, simples o *backticks* (`` ` ``). Usaremos comillas dobles, salvo en los template literals.
 
@@ -296,7 +607,7 @@ console.log("7".padStart(3, "0"));          // "007"
 
 ---
 
-## 8. Booleanos, `null` y `undefined`
+## 13. Booleanos, `null` y `undefined`
 
 Los booleanos se escriben en minúsculas: `true` y `false`.
 
@@ -333,7 +644,7 @@ console.log(typeof null);       // "object"
 
 ---
 
-## 9. Conversiones de tipo
+## 14. Conversiones de tipo
 
 En Python, `int("abc")` lanzaba `ValueError`. En JavaScript, `Number("abc")` **no lanza un error**: devuelve `NaN` (*Not a Number*), un valor especial de tipo `number`.
 
@@ -380,7 +691,7 @@ Convierte tú mismo los valores antes de operar. Así el programa hace lo que le
 
 ---
 
-## Actividad 1: Tipos y conversiones
+## Actividad 2: Tipos y conversiones
 
 Crea `tipos.js` y completa las líneas marcadas:
 
@@ -398,7 +709,7 @@ const stockTexto = "ocho";
 
 ---
 
-## 10. Comparaciones y operadores lógicos
+## 15. Comparaciones y operadores lógicos
 
 ### `===` en lugar de `==`
 
@@ -446,7 +757,7 @@ Usa `??` cuando `0` o el texto vacío sean valores válidos.
 
 ---
 
-## 11. Valores *truthy* y *falsy*
+## 16. Valores *truthy* y *falsy*
 
 Como en Python, una condición acepta cualquier valor y lo interpreta como verdadero o falso. La lista de valores **falsy** en JavaScript es:
 
@@ -480,7 +791,7 @@ Para saber si un array está vacío, compara su `length`. Veremos los arrays en 
 
 ---
 
-## 12. Condiciones
+## 17. Condiciones
 
 ```javascript
 const temperatura = 27;
@@ -514,7 +825,7 @@ Se lee: *condición* `?` *valor si es verdadera* `:` *valor si es falsa*. Úsalo
 
 ---
 
-## 13. Ciclos
+## 18. Ciclos
 
 ### `for` clásico
 
@@ -579,7 +890,7 @@ En Python usábamos `input()`. En Node.js leer de la terminal requiere asincron�
 
 ---
 
-## Actividad 2: Tabla de descuentos
+## Actividad 3: Tabla de descuentos
 
 Crea `descuentos.js`. Para cantidades de 1 a 10 unidades de un producto de `$450`:
 
@@ -604,7 +915,17 @@ Salida esperada:
 
 ---
 
-## Errores comunes viniendo de Python
+## Errores comunes
+
+### En el ambiente
+
+1. **No abrir una terminal nueva después de instalar.** La terminal lee su configuración al abrirse; las que ya estaban abiertas no ven a fnm ni a Node.js.
+2. **Tener varias instalaciones de Node.js sin saberlo.** Si la versión no es la esperada, revisa `which node` / `Get-Command node` antes de reinstalar.
+3. **Usar `sudo npm install -g`.** Si npm pide permisos de administrador, la instalación de Node.js es la que hay que corregir.
+4. **Ejecutar desde la carpeta equivocada.** `node hola.js` busca el archivo en la carpeta actual; comprueba con `pwd` dónde estás. Trabaja dentro de la carpeta del curso para que se apliquen su `.nvmrc` y su `package.json`.
+5. **Abrir un archivo suelto en el editor.** Abre la carpeta del curso completa para que la terminal integrada y el depurador trabajen en el lugar correcto.
+
+### Viniendo de Python
 
 1. **Olvidar declarar la variable.** Escribe `const` o `let` la primera vez. Reasignar con `let` no repite la palabra.
 2. **Usar `==`.** `"5" == 5` es `true`. Usa `===`.
@@ -618,6 +939,21 @@ Salida esperada:
 ---
 
 ## Cheat sheet
+
+### Ambiente
+
+| Tarea | En Python | En Node.js |
+|---|---|---|
+| Ver la versión | `python --version` | `node --version` |
+| Instalar una versión | `pyenv install 3.13` | `fnm install 24` |
+| Versión por defecto | `pyenv global 3.13` | `fnm default 24` |
+| Versión del proyecto | `.python-version` | `.nvmrc` + `fnm use` |
+| Dónde está el ejecutable | `which python` | `which node` / `Get-Command node` |
+| Consola interactiva | `python` | `node` (salir con `.exit`) |
+| Reiniciar al guardar | — | `node --watch programa.js` |
+| Depurar | Depurador de VS Code | *JavaScript Debug Terminal* en VS Code |
+
+### Sintaxis
 
 | Tarea | En Python | En JavaScript |
 |---|---|---|

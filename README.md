@@ -11,11 +11,11 @@ Las explicaciones introducen la sintaxis antes de usarla en programas completos.
 ## Requisitos
 
 - Haber completado el curso de Python aplicado, o tener un nivel equivalente: estructuras de datos, funciones, excepciones, JSON, HTTP, consumo y creación de APIs.
-- Node.js 24 LTS o superior. La edición se comprobó con Node.js 24.15.0 y npm 11.12.1.
-- Un editor y una terminal.
+- Node.js 24 LTS o superior. La edición se comprobó con Node.js 24.15.0 y npm 11.12.1. La clase 01 explica cómo instalarlo con un gestor de versiones; el archivo `.nvmrc` de la raíz fija la versión del curso.
+- Un editor (recomendamos VS Code) y una terminal.
 - Acceso a Internet y una API key de OpenRouter para las actividades de IA. La clave se configura fuera del código y del repositorio.
 
-Comprueba la instalación:
+Comprueba la instalación en una terminal nueva:
 
 ```bash
 node --version
@@ -37,11 +37,15 @@ No es necesario instalar todo desde la primera clase: cada documento indica las 
 
 ## Contenido
 
-Las clases siguen el patrón `clase_NN_tema.md`, con numeración continua del 01 al 10. El proyecto final tiene su propio documento al final del índice. Entre paréntesis aparece la clase equivalente del curso de Python.
+Las clases siguen el patrón `clase_NN_tema.md`, con numeración continua del 00 al 10. El proyecto final tiene su propio documento al final del índice. Entre paréntesis aparece la clase equivalente del curso de Python.
 
-### 1. [De Python a JavaScript con Node.js](clase_01_de_python_a_javascript.md)
+### 0. [De JavaScript en el navegador a Node.js](clase_00_historia_de_javascript.md)
 
-Qué es Node.js, REPL, variables, tipos, conversiones, comparaciones, valores truthy y falsy, condiciones y ciclos. (Base de todo el curso de Python.)
+Línea de tiempo de JavaScript desde 1995: ECMAScript, V8, el nacimiento de Node.js y su event loop, npm, ES2015, `async` / `await` y el ecosistema actual. Explica de dónde vienen las rarezas del lenguaje y cómo distinguir el código antiguo del moderno. No requiere instalar nada.
+
+### 1. [Node.js en tu computadora y de Python a JavaScript](clase_01_de_python_a_javascript.md)
+
+Parte 1: instalación de Node.js con un gestor de versiones (fnm o nvm) en macOS, Windows y Linux, ambiente local (terminal, VS Code, carpeta del curso, `.nvmrc`), REPL, `--watch`, depurador y solución de problemas de instalación. Parte 2: variables, tipos, conversiones, comparaciones, valores truthy y falsy, condiciones y ciclos. (Base de todo el curso de Python.)
 
 ### 2. [Arrays y Set](clase_02_arrays_y_set.md)
 
@@ -97,6 +101,7 @@ Cliente de consola que crea y consulta mazos de tarjetas de estudio mediante una
 | `lambda` | Arrow function `(x) => ...` |
 | `try` / `except` / `raise` | `try` / `catch` / `throw` |
 | `input()` | `readline/promises` con `await` |
+| `pyenv` + `.python-version` | `fnm` / `nvm` + `.nvmrc` |
 | `venv` + `pip` + `requirements.txt` | `node_modules` + `npm` + `package.json` |
 | `os.getenv()` | `process.env` |
 | `pathlib` y `open()` | `node:path` y `node:fs/promises` |
@@ -109,6 +114,10 @@ Cliente de consola que crea y consulta mazos de tarjetas de estudio mediante una
 ## Progresión del curso
 
 ```text
+Historia: de JavaScript a Node.js
+  ↓
+Instalación y ambiente local
+  ↓
 Python que ya conoces
   ↓
 Sintaxis de JavaScript
